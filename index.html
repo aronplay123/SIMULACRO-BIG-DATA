@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMULACRO EXAMEN BIG DATA</title>
+  <div class="fecha-examen">
+    <h1>📅 Fecha del Examen</h1>
+    <p class="fecha">07 de Noviembre de 2025</p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: linear-gradient(rgba(243, 242, 241, 0.6), rgba(243, 242, 241, 0.6)), url('/img/maletas.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: transparent;
+    }
+    .header {
+        margin-bottom: 20px;
+    }
+    h2 {
+        color: rgb(50, 49, 48);
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+    .question {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 4px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .question p {
+        color: rgb(50, 49, 48);
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+    .feedback {
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    .correct {
+      color: #22c55e;
+    }
+    .incorrect {
+      color: #ef4444;
+    }
+    button {
+        background-color: rgb(0, 120, 212);
+        color: white;
+        border: none;
+        padding: 8px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: block;
+        margin: 25px auto;
+    }
+    button:hover {
+        background-color: rgb(0, 90, 158);
+    }
+    label {
+        display: block;
+        padding: 12px 16px;
+        margin: 8px 0;
+        background: white;
+        border: 1px solid rgb(237, 235, 233);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    label:hover {
+        background: rgb(243, 242, 241);
+        border-color: rgb(200, 198, 196);
+    }
+    #resultadoFinal {
+      display: none;
+      text-align: center;
+      margin: 20px auto;
+      padding: 30px;
+      background-color: white;
+      max-width: 800px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    #resultadoFinal h3 {
+      font-size: 28px;
+      color: #323130;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+    #btnDescargar {
+        background-color: #107C10;
+        margin-top: 20px;
+    }
+    #btnDescargar:hover {
+        background-color: #0B5C0B;
+    }
+    #btnDescargar:disabled {
+        background-color: rgb(237, 235, 233);
+        cursor: not-allowed;
+    }
+    canvas {
+      margin: 20px auto;
+      max-width: 400px;
+      height: auto !important;
+    }
+    .print-content {
+      background-color: white;
+      padding: 40px;
+      margin: 0 auto;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    .print-content h3 {
+      color: #107C10;
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #107C10;
+      padding-bottom: 10px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .stat-box {
+      background: #f8f8f8;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .stat-label {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+    }
+    .chart-container {
+      margin: 40px auto;
+      max-width: 500px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .chart-title {
+      color: #323130;
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .fecha-examen {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 4px;
+      padding: 24px;
+      margin: 0 auto 16px;
+      max-width: 800px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .fecha-examen h1 {
+      color: rgb(50, 49, 48);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .fecha-examen .fecha {
+      color: rgb(0, 120, 212);
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0;
+      padding: 8px;
+      border-radius: 4px;
+      background: rgba(0, 120, 212, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🧠 Evaluación Interactiva de Big Data</h2>
+    <div id="quiz"></div>
+    <button id="btnFinalizar" onclick="finalizar()">Finalizar evaluación</button>
+
+    <div id="resultadoFinal">
+      <h3>📊 Resumen Final</h3>
+      <p id="resumenTexto"></p>
+      <canvas id="grafico"></canvas>
+      <!-- Gráfico adicional: respondidas vs no respondidas -->
+      <canvas id="grafico2" style="margin-top: 10px;"></canvas>
+      <div id="errores"></div>
+    </div>
+  </div>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "¿Qué es el HDFS?",
+        opciones: [
+          "Un lenguaje de programación",
+          "Sistema de archivos distribuido de Hadoop",
+          "Una base de datos relacional"
+        ],
+        correcta: 1,
+        explicacion: "✅ HDFS (Hadoop Distributed File System) es el sistema que permite almacenar datos distribuidos en varios nodos."
+      },
+      {
+        texto: "¿Qué es MapReduce?",
+        opciones: [
+          "Un algoritmo que divide y procesa datos en paralelo",
+          "Un lenguaje para diseñar dashboards",
+          "Un motor de base de datos"
+        ],
+        correcta: 0,
+        explicacion: "✅ MapReduce permite dividir tareas grandes en pequeñas partes y procesarlas en paralelo dentro de Hadoop."
+      },
+      {
+        texto: "Hadoop procesa los datos rápidamente:",
+        opciones: ["Verdadero", "Falso"],
+        correcta: 1,
+        explicacion: "✅ Falso. Hadoop es más lento porque trabaja en disco, aunque maneja gran volumen de datos."
+      },
+      {
+        texto: "¿Cuál es el servicio de Big Data en AWS?",
+        opciones: ["DataProc", "HDInsight", "EMR"],
+        correcta: 2,
+        explicacion: "✅ En AWS, el servicio de Big Data es Amazon EMR (Elastic Map Reduce)."
+      },
+      {
+        texto: "¿Qué diferencia principal tiene Spark frente a Hadoop?",
+        opciones: [
+          "Spark procesa en memoria, Hadoop en disco",
+          "Hadoop procesa en memoria, Spark en disco",
+          "Ambos procesan en memoria"
+        ],
+        correcta: 0,
+        explicacion: "✅ Spark es mucho más rápido porque trabaja en memoria RAM, mientras Hadoop lo hace desde el disco."
+      },
+      {
+  texto: "¿Qué es YARN en el ecosistema Hadoop?",
+  opciones: [
+    "Un sistema operativo",
+    "Un gestor de recursos y tareas",
+    "Un formato de compresión de datos"
+  ],
+  correcta: 1,
+  explicacion: "✅ YARN (Yet Another Resource Negotiator) coordina los recursos y ejecuta tareas en Hadoop."
+},
+{
+  texto: "¿Cuál es la función principal de Hive?",
+  opciones: [
+    "Procesar imágenes",
+    "Facilitar consultas tipo SQL sobre Hadoop",
+    "Administrar nodos del clúster"
+  ],
+  correcta: 1,
+  explicacion: "✅ Hive permite ejecutar consultas tipo SQL sobre datos almacenados en Hadoop."
+},
+{
+  texto: "¿Qué herramienta de Hadoop se usa para importar y exportar datos a bases de datos relacionales?",
+  opciones: ["Flume", "Sqoop", "Oozie"],
+  correcta: 1,
+  explicacion: "✅ Sqoop sirve para transferir datos entre Hadoop y bases de datos relacionales."
+},
+{
+  texto: "¿Qué hace Apache Flume?",
+  opciones: [
+    "Recolecta y mueve grandes volúmenes de datos de registros (logs)",
+    "Analiza texto con IA",
+    "Transforma datos en SQL"
+  ],
+  correcta: 0,
+  explicacion: "✅ Flume transporta datos de registro desde múltiples fuentes hacia HDFS."
+},
+{
+  texto: "¿Qué característica tiene Spark Streaming?",
+  opciones: [
+    "Procesa datos en tiempo real",
+    "Solo procesa datos históricos",
+    "Se usa únicamente en AWS"
+  ],
+  correcta: 0,
+  explicacion: "✅ Spark Streaming permite procesar flujos de datos en tiempo real."
+},
+{
+  texto: "¿Qué lenguaje NO es compatible con Apache Spark?",
+  opciones: ["Scala", "Python", "PHP"],
+  correcta: 2,
+  explicacion: "✅ Spark soporta Scala, Python, Java y R, pero no PHP."
+},
+{
+  texto: "¿Qué servicio de Google Cloud es equivalente a EMR en AWS?",
+  opciones: ["DataProc", "BigQuery", "Dataflow"],
+  correcta: 0,
+  explicacion: "✅ Google Cloud DataProc es el servicio administrado de Hadoop y Spark en GCP."
+},
+{
+  texto: "¿Qué servicio de Azure es equivalente a EMR?",
+  opciones: ["HDInsight", "Data Factory", "Synapse"],
+  correcta: 0,
+  explicacion: "✅ Azure HDInsight es la alternativa de Microsoft para clústeres de Big Data."
+},
+{
+  texto: "¿Qué módulo de Spark permite ejecutar consultas tipo SQL?",
+  opciones: ["Spark SQL", "GraphX", "MLlib"],
+  correcta: 0,
+  explicacion: "✅ Spark SQL permite consultas estructuradas sobre DataFrames y datasets."
+},
+{
+  texto: "¿Qué representa el término 'Data Lake'?",
+  opciones: [
+    "Un lago subterráneo digital",
+    "Un repositorio que guarda datos sin procesar en su formato original",
+    "Una base de datos relacional optimizada"
+  ],
+  correcta: 1,
+  explicacion: "✅ Un Data Lake almacena datos crudos en su formato original para su posterior análisis."
+},
+{
+  texto: "¿Qué es MLlib en Apache Spark?",
+  opciones: [
+    "Una herramienta de visualización de datos",
+    "Una biblioteca de Machine Learning",
+    "Un sistema de almacenamiento en la nube"
+  ],
+  correcta: 1,
+  explicacion: "✅ MLlib es la biblioteca de Spark que ofrece algoritmos y utilidades de Machine Learning."
+},
+{
+  texto: "¿Qué es GraphX en Spark?",
+  opciones: [
+    "Una librería para gráficos y análisis de grafos",
+    "Un motor de base de datos",
+    "Un lenguaje de programación"
+  ],
+  correcta: 0,
+  explicacion: "✅ GraphX permite realizar análisis y cálculos sobre estructuras de grafos en Spark."
+},
+{
+  texto: "¿Qué tipo de bases de datos son MongoDB y Cassandra?",
+  opciones: [
+    "Relacionales",
+    "No relacionales (NoSQL)",
+    "Basadas en archivos CSV"
+  ],
+  correcta: 1,
+  explicacion: "✅ MongoDB y Cassandra son bases de datos NoSQL diseñadas para manejar grandes volúmenes de datos."
+},
+{
+  texto: "¿Qué comando en Spark muestra los primeros registros de un DataFrame?",
+  opciones: ["show()", "head()", "display()"],
+  correcta: 0,
+  explicacion: "✅ El método show() muestra por defecto los primeros 20 registros de un DataFrame en Spark."
+},
+{
+  texto: "¿Qué hace la opción 'inferSchema' al cargar datos en Spark?",
+  opciones: [
+    "Adivina automáticamente el tipo de datos de cada columna",
+    "Ignora los encabezados del archivo",
+    "Elimina las filas vacías"
+  ],
+  correcta: 0,
+  explicacion: "✅ inferSchema permite a Spark detectar automáticamente los tipos de datos de cada columna."
+},
+{
+  texto: "¿Qué ocurre si un archivo tiene encabezado y no lo especificas al crear un DataFrame?",
+  opciones: [
+    "Spark crea una fila adicional con el encabezado como datos",
+    "Spark elimina la primera fila",
+    "Spark lanza un error y no carga el archivo"
+  ],
+  correcta: 0,
+  explicacion: "✅ Si no se indica header=true, Spark tratará la primera fila (el encabezado) como datos."
+},
+{
+  texto: "¿Qué librería se usa para conectar Python con MongoDB?",
+  opciones: ["PyMongo", "Pandas", "SQLAlchemy"],
+  correcta: 0,
+  explicacion: "✅ PyMongo es la librería oficial de Python para conectarse y trabajar con bases de datos MongoDB."
+},
+{
+  texto: "¿Qué significa que un sistema sea distribuido?",
+  opciones: [
+    "Que funciona en varios nodos o máquinas conectadas",
+    "Que procesa en un solo computador con mucha RAM",
+    "Que depende de una red social"
+  ],
+  correcta: 0,
+  explicacion: "✅ Un sistema distribuido divide el trabajo entre múltiples máquinas para mayor rendimiento y tolerancia a fallos."
+},
+{
+  texto: "¿Qué característica hace que Spark sea más rápido que Hadoop?",
+  opciones: [
+    "Procesa los datos directamente en memoria (RAM)",
+    "Usa discos duros SSD más rápidos",
+    "Tiene menos componentes que Hadoop"
+  ],
+  correcta: 0,
+  explicacion: "✅ Spark guarda y procesa los datos en memoria RAM, reduciendo el tiempo de lectura/escritura en disco."
+},
+{
+  texto: "¿Qué es DBFS en Databricks?",
+  opciones: [
+    "Un sistema de archivos distribuido propio de Databricks",
+    "Un lenguaje de consulta SQL",
+    "Una red de transmisión de datos"
+  ],
+  correcta: 0,
+  explicacion: "✅ DBFS (Databricks File System) es el sistema de archivos distribuido de Databricks."
+},
+{
+  texto: "¿Qué ventaja principal ofrece Spark sobre MapReduce?",
+  opciones: [
+    "Procesa los datos en memoria, aumentando la velocidad",
+    "Utiliza menos nodos en el clúster",
+    "Usa una base de datos interna"
+  ],
+  correcta: 0,
+  explicacion: "✅ Spark es más rápido porque procesa los datos directamente en memoria RAM, mientras que MapReduce usa disco."
+},
+{
+  texto: "¿Qué componente de Hadoop se encarga del almacenamiento?",
+  opciones: ["YARN", "HDFS", "Hive"],
+  correcta: 1,
+  explicacion: "✅ HDFS (Hadoop Distributed File System) almacena los datos distribuidos en múltiples nodos del clúster."
+},
+{
+  texto: "¿Qué componente de Hadoop se encarga del procesamiento de tareas?",
+  opciones: ["MapReduce", "HDFS", "Sqoop"],
+  correcta: 0,
+  explicacion: "✅ MapReduce procesa y analiza grandes volúmenes de datos distribuidos en Hadoop."
+},
+{
+  texto: "¿Qué es Apache Oozie?",
+  opciones: [
+    "Un coordinador de flujos de trabajo (workflow) para Hadoop",
+    "Un lenguaje de programación",
+    "Una base de datos documental"
+  ],
+  correcta: 0,
+  explicacion: "✅ Oozie coordina la ejecución de tareas y flujos de trabajo en el ecosistema Hadoop."
+},
+{
+  texto: "¿Qué lenguaje se utiliza comúnmente para trabajar con Spark en la nube (Databricks)?",
+  opciones: ["Python (PySpark)", "C++", "Go"],
+  correcta: 0,
+  explicacion: "✅ En Databricks se suele usar PySpark, la API de Python para trabajar con Spark."
+},
+{
+  texto: "¿Qué significa que Databricks sea colaborativo?",
+  opciones: [
+    "Permite a varios usuarios trabajar simultáneamente en notebooks compartidos",
+    "Se conecta con redes sociales",
+    "Guarda los datos en carpetas públicas"
+  ],
+  correcta: 0,
+  explicacion: "✅ Databricks permite que varios usuarios editen y ejecuten notebooks en tiempo real dentro de un mismo Workspace."
+},
+{
+  texto: "¿Cuál de los siguientes servicios pertenece al ecosistema de Azure?",
+  opciones: ["HDInsight", "DataProc", "EMR"],
+  correcta: 0,
+  explicacion: "✅ HDInsight es el servicio de Azure equivalente a EMR (AWS) y DataProc (GCP)."
+},
+{
+  texto: "¿Qué tipo de datos procesa mejor Spark Streaming?",
+  opciones: [
+    "Datos en tiempo real o en flujo (streaming)",
+    "Datos estructurados estáticos",
+    "Datos de imágenes"
+  ],
+  correcta: 0,
+  explicacion: "✅ Spark Streaming está diseñado para procesar datos en tiempo real conforme se generan."
+},
+{
+  texto: "¿Qué se necesita instalar en Python para usar Spark?",
+  opciones: ["pyspark", "sparkSQL", "hadoop-py"],
+  correcta: 0,
+  explicacion: "✅ Se instala la librería PySpark para poder trabajar con Apache Spark desde Python."
+},
+{
+  texto: "¿Qué empresa creó originalmente Apache Spark?",
+  opciones: ["UC Berkeley (AMP Lab)", "Google", "Amazon"],
+  correcta: 0,
+  explicacion: "✅ Spark fue desarrollado en el laboratorio AMP Lab de la Universidad de California, Berkeley."
+},
+{
+  texto: "¿Qué ventaja ofrece Databricks frente a usar Spark localmente?",
+  opciones: [
+    "Permite colaboración en la nube, integración con múltiples servicios y escalabilidad automática",
+    "Requiere menos memoria RAM",
+    "No necesita conexión a internet"
+  ],
+  correcta: 0,
+  explicacion: "✅ Databricks ofrece un entorno colaborativo en la nube que escala automáticamente y se integra con múltiples fuentes de datos."
+},
+{
+  texto: "¿Qué es Delta Lake dentro de Databricks?",
+  opciones: [
+    "Una extensión que mejora la confiabilidad y manejo de datos en los Data Lakes",
+    "Un lago de datos físico",
+    "Un tipo de gráfico estadístico"
+  ],
+  correcta: 0,
+  explicacion: "✅ Delta Lake añade control de versiones, transacciones ACID y calidad a los Data Lakes en Databricks."
+},
+{
+  texto: "¿Qué componente de Big Data se encarga del almacenamiento distribuido?",
+  opciones: ["HDFS", "Spark SQL", "Kafka"],
+  correcta: 0,
+  explicacion: "✅ HDFS (Hadoop Distributed File System) almacena grandes volúmenes de datos distribuidos entre nodos."
+},
+{
+  texto: "¿Qué herramienta se usa para la orquestación de flujos de datos en Big Data?",
+  opciones: ["Oozie", "Sqoop", "Hive"],
+  correcta: 0,
+  explicacion: "✅ Apache Oozie coordina y programa flujos de trabajo en entornos Hadoop."
+},
+{
+  texto: "¿Cuál es el propósito principal del Big Data?",
+  opciones: [
+    "Extraer valor y conocimiento útil de grandes volúmenes de información",
+    "Almacenar datos sin analizarlos",
+    "Reducir el tamaño de los archivos"
+  ],
+  correcta: 0,
+  explicacion: "✅ El objetivo del Big Data es transformar enormes cantidades de datos en información útil para la toma de decisiones."
+}
+    ];
+
+    let correctas = 0;
+    let incorrectas = 0;
+    let errores = [];
+
+    const quiz = document.getElementById("quiz");
+    preguntas.forEach((p, i) => {
+      const div = document.createElement("div");
+      div.classList.add("question");
+      div.innerHTML = `<p><b>${i + 1}. ${p.texto}</b></p>`;
+      p.opciones.forEach((op, j) => {
+        const id = `p${i}_o${j}`;
+        div.innerHTML += `
+          <label>
+            <input type="radio" name="p${i}" id="${id}" value="${j}" onchange="evaluar(${i}, ${j})">
+            ${op}
+          </label><br>`;
+      });
+      div.innerHTML += `<div id="feedback${i}" class="feedback"></div>`;
+      quiz.appendChild(div);
+    });
+
+    function evaluar(i, j) {
+      const fb = document.getElementById(`feedback${i}`);
+      if (j === preguntas[i].correcta) {
+        fb.textContent = preguntas[i].explicacion;
+        fb.className = "feedback correct";
+        correctas++;
+      } else {
+        fb.textContent = "❌ Incorrecto";
+        fb.className = "feedback incorrect";
+        incorrectas++;
+        errores.push({ pregunta: preguntas[i].texto, respuesta: preguntas[i].opciones[preguntas[i].correcta] });
+      }
+      const radios = document.getElementsByName(`p${i}`);
+      radios.forEach(r => r.disabled = true);
+    }
+
+    let evaluacionFinalizada = false;
+
+    function finalizar() {
+      if (evaluacionFinalizada) {
+        return;
+      }
+
+      const total = preguntas.length;
+      const porcentaje = ((correctas / total) * 100).toFixed(1);
+      
+      // Deshabilitar el botón de finalizar
+      const btnFinalizar = document.getElementById('btnFinalizar');
+      btnFinalizar.disabled = true;
+      btnFinalizar.style.backgroundColor = 'rgb(237, 235, 233)';
+      btnFinalizar.style.cursor = 'not-allowed';
+      btnFinalizar.textContent = 'Evaluación finalizada';
+      
+      evaluacionFinalizada = true;
+
+      document.getElementById("resultadoFinal").style.display = "block";
+      document.getElementById("resumenTexto").innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">✅ Correctas</div>
+            <div class="stat-value" style="color: #22c55e">${correctas}</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">❌ Incorrectas</div>
+            <div class="stat-value" style="color: #ef4444">${incorrectas}</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">📈 Porcentaje</div>
+            <div class="stat-value" style="color: #0078d4">${porcentaje}%</div>
+          </div>
+        </div>`;
+
+      // Agregar título para el gráfico
+      const chartContainer = document.createElement('div');
+      chartContainer.className = 'chart-container';
+      const chartTitle = document.createElement('div');
+      chartTitle.className = 'chart-title';
+      chartTitle.textContent = 'Distribución de Respuestas';
+      const canvas = document.getElementById("grafico");
+      canvas.parentNode.insertBefore(chartContainer, canvas);
+      chartContainer.appendChild(chartTitle);
+      chartContainer.appendChild(canvas);
+      
+      const ctx = canvas.getContext("2d");
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Correctas", "Incorrectas"],
+          datasets: [{
+            data: [correctas, incorrectas],
+            backgroundColor: ["#22c55e", "#ef4444"],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14,
+                  family: "'Segoe UI', system-ui, -apple-system, sans-serif"
+                },
+                padding: 20
+              }
+            },
+            title: {
+              display: true,
+              text: 'Distribución de Respuestas',
+              font: {
+                size: 18,
+                family: "'Segoe UI', system-ui, -apple-system, sans-serif",
+                weight: 600
+              },
+              padding: {
+                top: 10,
+                bottom: 20
+              }
+            }
+          }
+        }
+      });
+
+  // Crear gráfico adicional: Respondidas vs No respondidas
+  const respondidas = correctas + incorrectas;
+      const noRespondidas = total - respondidas;
+
+      const canvas2 = document.getElementById('grafico2');
+      const ctx2 = canvas2.getContext('2d');
+      new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Respondidas', 'No respondidas'],
+          datasets: [{
+            data: [respondidas, noRespondidas],
+            backgroundColor: ['#0078d4', '#cbd5e1']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 13 } }
+            },
+            title: {
+              display: true,
+              text: 'Estado de respuestas',
+              font: { size: 16, weight: 600 }
+            }
+          }
+        }
+      });
+
+      let erroresHTML = `
+        <div style="margin-top: 40px;">
+          <h4 style="font-size: 24px; color: #323130; margin-bottom: 20px; text-align: left; border-bottom: 2px solid #ef4444; padding-bottom: 10px;">
+            ❌ Análisis de Respuestas Incorrectas
+          </h4>
+          <div style="background-color: #f8f8f8; border-radius: 8px; padding: 25px;">
+      `;
+      errores.forEach(e => {
+        erroresHTML += `
+          <div style="margin-bottom: 20px; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="font-size: 16px; margin-bottom: 15px; color: #323130;"><b>📝 Pregunta:</b> ${e.pregunta}</p>
+            <p style="color: #22c55e; margin: 0; padding: 10px; background-color: rgba(34, 197, 94, 0.1); border-radius: 4px;">
+              <b>✅ Respuesta correcta:</b> ${e.respuesta}
+            </p>
+          </div>`;
+      });
+      document.getElementById("errores").innerHTML = erroresHTML;
+
+      // Agregar botón de descarga después de mostrar los resultados
+      if (!document.getElementById('btnDescargar')) {
+        const btnDescargar = document.createElement('button');
+        btnDescargar.id = 'btnDescargar';
+        btnDescargar.innerHTML = '📥 Descargar Reporte PDF';
+        btnDescargar.onclick = descargarPDF;
+        document.getElementById("resultadoFinal").appendChild(btnDescargar);
+      }
+    }
+
+    async function descargarPDF() {
+      const btnDescargar = document.getElementById('btnDescargar');
+      btnDescargar.disabled = true;
+      btnDescargar.textContent = 'Generando PDF...';
+
+      try {
+        // Preparar el contenido para el PDF
+  const resultadoFinal = document.getElementById('resultadoFinal');
+        
+        // Clonar el contenido para no modificar el original
+        const contenido = document.createElement('div');
+        contenido.className = 'print-content';
+        contenido.innerHTML = resultadoFinal.innerHTML;
+        
+        // Reemplazar todos los canvas dentro del clon por imágenes (mantener ambos gráficos)
+        const canvasesOriginal = resultadoFinal.querySelectorAll('canvas');
+        const canvasesClon = contenido.querySelectorAll('canvas');
+        canvasesOriginal.forEach((c, idx) => {
+          try {
+            const imgData = c.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imgData;
+            img.style.maxWidth = '400px';
+            img.style.margin = '20px auto';
+            img.style.display = 'block';
+            const canvasCl = canvasesClon[idx];
+            if (canvasCl && canvasCl.parentNode) {
+              canvasCl.parentNode.replaceChild(img, canvasCl);
+            }
+          } catch (e) {
+            // Si por alguna razón toDataURL falla, ignorar y continuar
+            console.warn('No se pudo convertir canvas a imagen:', e);
+          }
+        });
+        
+        // Agregar el contenido temporalmente al documento
+        contenido.style.position = 'absolute';
+        contenido.style.left = '-9999px';
+        document.body.appendChild(contenido);
+
+        // Generar el PDF con paginación cuando el contenido exceda una página A4
+        const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+        // Capturar el contenido como imagen (canvas grande)
+        const canvas = await html2canvas(contenido, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+
+        // Eliminar el contenido temporal
+        document.body.removeChild(contenido);
+
+        // Dimensiones A4 y márgenes
+        const pageWidth = 210; // mm
+        const pageHeight = 297; // mm
+        const margin = 10; // mm de margen superior/inferior
+        const printableWidth = pageWidth - margin * 2; // mm
+        const printableHeight = pageHeight - margin * 2; // mm
+
+        // Conversión px <-> mm según el canvas y el ancho printable
+        const pxPerMm = canvas.width / printableWidth; // px por mm
+
+        // Altura printable en px por página
+        const pageHeightPx = Math.floor(printableHeight * pxPerMm);
+
+        let yPos = 0;
+        let pageCount = 0;
+
+        while (yPos < canvas.height) {
+          pageCount++;
+
+          // Altura del slice en px
+          const sliceHeight = Math.min(pageHeightPx, canvas.height - yPos);
+
+          // Crear canvas temporal para el slice
+          const sliceCanvas = document.createElement('canvas');
+          sliceCanvas.width = canvas.width;
+          sliceCanvas.height = sliceHeight;
+          const sliceCtx = sliceCanvas.getContext('2d');
+
+          // Dibujar la porción correspondiente
+          sliceCtx.drawImage(canvas, 0, yPos, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+          // Convertir slice a imagen JPEG
+          const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+
+          // Altura del slice en mm
+          const sliceHeightMm = sliceHeight / pxPerMm;
+
+          // Agregar imagen al PDF respetando márgenes
+          pdf.addImage(imgData, 'JPEG', margin, margin, printableWidth, sliceHeightMm);
+
+          yPos += sliceHeight;
+
+          // Si queda contenido, agregar nueva página
+          if (yPos < canvas.height) {
+            pdf.addPage();
+          }
+        }
+
+        // Guardar el PDF
+        const fecha = new Date().toLocaleDateString('es-ES');
+        pdf.save(`Reporte_Evaluacion_BigData_${fecha}.pdf`);
+
+        // Restaurar el botón
+        btnDescargar.disabled = false;
+        btnDescargar.textContent = '📥 Descargar Reporte PDF';
+      } catch (error) {
+        console.error('Error al generar PDF:', error);
+        alert('Hubo un error al generar el PDF. Por favor, intente nuevamente.');
+        btnDescargar.disabled = false;
+        btnDescargar.textContent = '📥 Descargar Reporte PDF';
+      }
+    }
+  </script>
+</body>
+</html>
